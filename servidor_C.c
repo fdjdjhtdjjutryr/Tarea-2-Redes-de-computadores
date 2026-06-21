@@ -99,6 +99,9 @@ int main(int argc, char *argv[]) {
 		  sprintf(mensaje_salida, "El mensaje recibido fue --- %s ---.",mensaje_entrada);
 
 
+
+
+
       if(strncmp(mensaje_entrada,"listar",6)==0){ //comparamos para ver si dice "listar" desde el cliente
         DIR *d;
         struct dirent *dir;
@@ -116,9 +119,36 @@ int main(int argc, char *argv[]) {
           strcpy(mensaje_salida, "Error al abrir directorio\n");
         }
 
+      }else if(strncmp(mensaje_entrada,"descargar",9)==0) {
+
+        char nombre_archivo[255];
+
+        sscanf(mensaje_entrada,"descargar %s" , nombre_archivo);
+
+        FILE *fp = fopen(nombre_archivo, "r");
+
+        if(fp ==NULL){
+          strcpy(,mensaje_salida, "Error , archivo no encontrado");
+
+        }else{
+          int bytes_leidos;
+          while((bytes_leidos)=fread(mensaje_salida, 1 , MAX_TAM_MENSAJE, fp) > 0){
+            send(descriptor_socket_cliente , mensaje_salida, bytes_leidos, 0);
+          }
+          fclose(fp);
+          continue;
+        }
+        
       }else{
         strcpy(mensaje_salida, "Comando no reconocido\n");
       }
+
+
+
+
+
+
+
 
 
 		  if (send(descriptor_socket_cliente, strcat(mensaje_salida,"\0"), strlen(mensaje_salida)+1, 0) == -1) {
