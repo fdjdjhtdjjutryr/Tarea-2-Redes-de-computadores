@@ -120,8 +120,12 @@ int main(int argc, char *argv[]) {
         }
 
       }else if(strncmp(mensaje_entrada,"descargar",9)==0) {
+<<<<<<< HEAD
         printf("Debug mensaje recibido: %s\n ",mensaje_entrada);
         printf("debug archivo: %s \n",nombre_archivo);
+=======
+
+>>>>>>> 423d92a7dcf7fde9da69d3f1a6bd0ddca73eb5ee
         char nombre_archivo[255];
 
         sscanf(mensaje_entrada,"descargar %s" , nombre_archivo);
