@@ -84,13 +84,41 @@ int main(int argc, char *argv[]) {
     }
 
 	  //Recibe la respuesta
-    if(recv(descriptor_socket_origen, respuesta, sizeof(respuesta), 0) == -1) {
-      printf("ERROR al recibir el mensaje del servidor al cliente\n");
-      close(descriptor_socket_origen);
-      exit(EXIT_FAILURE);
-    } else {
-      printf("<<Server>>: %s\n", respuesta);
+
+    if(strncmp(mensaje,"descargar",9)==0){
+      char nombre_archivo[255];
+      sscanf(mensaje,"descargar %s",nombre_archivo);
+      FILE *fp = fopen(nombre_archivo,"w");
+      if(fp==NULL){
+        printf("Error al crear archvio \n");
+
+      }else{
+        int bytes;
+        while((bytes = recv(descriptor_socket_origen, respuesta,MAX_TAM_MENSAJE,0))>0){
+          fwrite(respuesta,1,bytes,fp);
+          if(bytes<MAX_TAM_MENSAJE){
+            break;
+          }
+        }
+        fclose(fp);
+        printf("Archivo recivido correctamente \n");
+      }
+    }else{
+      if(recv(descriptor_socket_origen,respuesta,sizeof(respuesta),0)==-1){
+        printf("Error al recibir el mensaje del servidor al cliente \n");
+        close(descriptor_socket_origen);
+        exit(EXIT_FAILURE);
+      }else{
+        printf("<<Server>>: %s \n",respuesta);
+      }
     }
+    
+
+
+
+
+
+
 
     //Se cierra la conexión (socket)
     if(strcmp(mensaje,"terminar();") == 0) {
