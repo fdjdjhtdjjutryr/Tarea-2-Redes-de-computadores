@@ -128,7 +128,7 @@ int main(int argc, char *argv[]) {
         FILE *fp = fopen(nombre_archivo, "r");
 
         if(fp ==NULL){
-          strcpy(,mensaje_salida, "Error , archivo no encontrado");
+          strcpy(mensaje_salida, "Error , archivo no encontrado");
 
         }else{
           int bytes_leidos;
