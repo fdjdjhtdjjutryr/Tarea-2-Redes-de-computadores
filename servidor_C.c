@@ -120,32 +120,30 @@ int main(int argc, char *argv[]) {
         }
 
       }else if(strncmp(mensaje_entrada,"descargar",9)==0) {
-<<<<<<< HEAD
-        printf("Debug mensaje recibido: %s\n ",mensaje_entrada);
-        printf("debug archivo: %s \n",nombre_archivo);
-=======
-
->>>>>>> 423d92a7dcf7fde9da69d3f1a6bd0ddca73eb5ee
+        
         char nombre_archivo[255];
 
         sscanf(mensaje_entrada,"descargar %s" , nombre_archivo);
 
         FILE *fp = fopen(nombre_archivo, "r");
-
         if(fp ==NULL){
-          strcpy(mensaje_salida, "Error , archivo no encontrado");
+          strcpy(mensaje_salida, "Error , archivo no encontrado \n");
 
         }else{
           int bytes_leidos;
-          while((bytes_leidos)=fread(mensaje_salida, 1 , MAX_TAM_MENSAJE, fp) > 0){
+          while((bytes_leidos = fread(mensaje_salida, 1, MAX_TAM_MENSAJE, fp)) > 0){
             send(descriptor_socket_cliente , mensaje_salida, bytes_leidos, 0);
           }
+
+          send(descriptor_socket_cliente, "Fin",4,0);
           fclose(fp);
           continue;
         }
         
       }else{
         strcpy(mensaje_salida, "Comando no reconocido\n");
+
+        
       }
 
 
