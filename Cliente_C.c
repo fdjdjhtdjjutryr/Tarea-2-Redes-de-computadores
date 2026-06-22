@@ -73,8 +73,9 @@ int main(int argc, char *argv[]) {
   signal(SIGINT, &catch);
   do {
     //Envía el mensaje
-    printf("<<Client>>: ");
-    scanf("%s",mensaje);
+    printf("<<Cliente>>: ");
+    fgets(mensaje, MAX_TAM_MENSAJE, stdin);
+    mensaje[strcspn(mensaje, "\n")] = 0;
     if(send(descriptor_socket_origen,mensaje, strlen(mensaje)+1, 0) == -1) {
       printf("ERROR al enviar el mensaje del cliente al servidor\n");
       close(descriptor_socket_origen);
@@ -84,41 +85,41 @@ int main(int argc, char *argv[]) {
     }
 
 	  //Recibe la respuesta
+    if (strncmp(mensaje, "descargar", 9) == 0) {
 
-    if(strncmp(mensaje,"descargar",9)==0){
-      char nombre_archivo[255];
-      sscanf(mensaje,"descargar %s",nombre_archivo);
-      FILE *fp = fopen(nombre_archivo,"w");
-      if(fp==NULL){
-        printf("Error al crear archvio \n");
+    char nombre_archivo[256];
+    sscanf(mensaje, "descargar %s", nombre_archivo);
 
-      }else{
+    FILE *fp = fopen(nombre_archivo, "w");
+
+    if (fp == NULL) {
+        printf("Error al crear archivo\n");
+    } else {
+
         int bytes;
-        while((bytes = recv(descriptor_socket_origen, respuesta,MAX_TAM_MENSAJE,0))>0){
-          fwrite(respuesta,1,bytes,fp);
-          if(bytes<MAX_TAM_MENSAJE){
+
+        while ((bytes = recv(descriptor_socket_origen, respuesta, MAX_TAM_MENSAJE, 0)) > 0) {
+            if(strcmp(respuesta, "Fin")==0){
             break;
-          }
+            }
+            fwrite(respuesta,1,bytes,fp);
         }
+
         fclose(fp);
-        printf("Archivo recivido correctamente \n");
-      }
-    }else{
-      if(recv(descriptor_socket_origen,respuesta,sizeof(respuesta),0)==-1){
-        printf("Error al recibir el mensaje del servidor al cliente \n");
+        printf("Archivo recibido correctamente\n");
+    }
+
+} else {
+
+    if(recv(descriptor_socket_origen, respuesta, sizeof(respuesta), 0) == -1) {
+        printf("ERROR al recibir el mensaje del servidor al cliente\n");
         close(descriptor_socket_origen);
         exit(EXIT_FAILURE);
-      }else{
-        printf("<<Server>>: %s \n",respuesta);
-      }
+    } else {
+        printf("<<Server>>: %s\n", respuesta);
     }
-    
 
-
-
-
-
-
+}
 
     //Se cierra la conexión (socket)
     if(strcmp(mensaje,"terminar();") == 0) {
