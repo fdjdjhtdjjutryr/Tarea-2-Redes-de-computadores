@@ -90,7 +90,10 @@ int main(int argc, char *argv[]) {
     char nombre_archivo[256];
     sscanf(mensaje, "descargar %s", nombre_archivo);
 
-    FILE *fp = fopen(nombre_archivo, "w");
+    char nombre_local[300];
+    sprintf(nombre_local, "copia_%s", nombre_archivo);
+
+    FILE *fp = fopen(nombre_local, "w");
 
     if (fp == NULL) {
         printf("Error al crear archivo\n");
@@ -99,9 +102,9 @@ int main(int argc, char *argv[]) {
         int bytes;
 
         while ((bytes = recv(descriptor_socket_origen, respuesta, MAX_TAM_MENSAJE, 0)) > 0) {
-            if(strcmp(respuesta, "Fin")==0){
+          if(strstr(respuesta, "Fin") != NULL){
             break;
-            }
+          }
             fwrite(respuesta,1,bytes,fp);
         }
 
